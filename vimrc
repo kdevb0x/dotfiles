@@ -1,4 +1,3 @@
-
 set nu
 set relativenumber
 set shiftwidth=4
@@ -26,7 +25,6 @@ else
 endif
 let g:deoplete#enable_at_startup = 1
 Plug 'jiangmiao/auto-pairs'
-Plug 'scrooloose/syntastic'
 call plug#end()
 
 autocmd BufWritePre * :%s/\s\+$//e
@@ -42,7 +40,7 @@ let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 
-let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 
 " Open go doc in vertical window, horizontal, or tab
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
@@ -78,6 +76,7 @@ nnoremap <Leader>e :NERDTreeToggle<cr>
 " Theme-ish stuff
 set termguicolors
 set background=dark
+colorscheme slate
 
 " deoplete-go settings
 let g:deoplete#sources#go#gocode_binary = $GOPATH.'/bin/gocode'
