@@ -1,6 +1,6 @@
 scriptencoding utf-8
 
-let g:mapleader = '\'
+let g:mapleader = ','
 
 let g:NERDTreeIgnore = ['\.pyc$']
 
@@ -33,6 +33,7 @@ if dein#load_state(g:dein_plugin_dir)
   call dein#add('jiangmiao/auto-pairs')
   call dein#add('Shougo/deoplete.nvim')
   call dein#add('zchee/deoplete-go', {'build': 'make'})
+  call dein#add('cespare/vim-toml')
 
   call dein#end()
   call dein#save_state()
@@ -46,7 +47,10 @@ filetype plugin indent on
 syntax enable
 
 " Settings from old init.vim
-let g:deoplete#enable_at_startup = 1
+if has('nvim')
+	" Enable deoplete on startup
+	let g:deoplete#enable_at_startup = 1
+endif
 " Path to python for neovim
 let g:python3_host_prog = '/usr/bin/python'
 let g:python3_host_skip_check = 1
@@ -73,8 +77,9 @@ let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
+let g:go_auto_type_info = 1
 
-let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
+" let g:syntastic_go_checkers = ['go', 'golint', 'errcheck']
 
 " Open go doc in vertical window, horizontal, or tab
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
@@ -89,12 +94,16 @@ inoremap <C-Space> <C-x><C-o>
 autocmd CursorMovedI * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
 
-au Filetype go nmap <leader>ds <Plug>(go-doc-vertical)
-au Filetype go nmap <leader>dd <Plug>(go-doc)
-au Filetype go nmap <leader>di <Plug>(go-doc-split)
-au Filetype go nmap <leader>ff <Plug>(go-def)
-au Filetype go nmap <leader>fi <Plug>(go-def-split)
-au Filetype go nmap <leader>fs <Plug>(go-def-vertical)
+au Filetype go nmap <leader>gdv <Plug>(go-doc-vertical)
+au Filetype go nmap <leader>gd <Plug>(go-doc)
+au Filetype go nmap <leader>gdh <Plug>(go-doc-split)
+au Filetype go nmap <leader>ga <Plug>(go-alternate-edit)
+au Filetype go nmap <leader>gah <Plug>(go-alternate-split)
+au Filetype go nmap <leader>gav <Plug>(go-alternate-vertical)
+
+au FileType go nmap <F10> :GoTest -short<cr>
+au FileType go nmap <F9> :GoCoverageToggle -short<cr>
+au FileType go nmap <F12> <Plug>(go-def)
 
 " Theming!
 set termguicolors
@@ -129,7 +138,6 @@ set mouse=a
 set nolist
 set nowrap
 set nowrapscan
-set number
 set path+=**
 set scrolloff=5
 set sidescrolloff=5
@@ -202,7 +210,7 @@ inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <expr> <C-n> pumvisible() ? '<C-n>' : '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 inoremap <expr> <M-,> pumvisible() ? '<C-n>' : '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
-nnoremap <silent> <Leader>s :TagbarToggle<cr>
+" nnoremap <silent> <Leader>s :TagbarToggle<cr>
 
 " Don't clutter directories with .swp files
 silent !mkdir ~/.config/nvim/backup > /dev/null 2>&1
