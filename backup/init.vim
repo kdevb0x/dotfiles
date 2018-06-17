@@ -4,38 +4,58 @@ let mapleader = ','
 let g:mapleader = ','
 
 
+"dein Scripts-----------------------------
+if &compatible
+  set nocompatible               " Be iMproved
+endif
 
 " Required:
-let g:_plugin_dir = expand('/home/k/.local/share/nvim/plugged')
+set runtimepath+=/home/k/.cache/dein/repos/github.com/Shougo/dein.vim
 
-call plug#begin(_plugin_dir)
+" Required:
+let g:dein_plugin_dir = expand('/home/k/.cache/dein/bundles/')
 
-" Add or remove your plugins here:
-  Plug 'Shougo/neosnippet.vim'
-  Plug 'Shougo/neosnippet-snippets'
-  Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make' }
+if dein#load_state(g:dein_plugin_dir)
+  call dein#begin(g:dein_plugin_dir)
 
-  Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
-  Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-update-rc --no-key-bindings --no-completion', 'merged': 0 }
-  Plug 'junegunn/fzf.vim'
-  Plug 'junegunn/vim-easy-align'
-  Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-  Plug 'sheerun/vim-polyglot'
-  Plug 'tomasr/molokai'
-  Plug 'tpope/vim-repeat'
-  Plug 'tpope/vim-surround'
-  Plug 'tpope/vim-fugitive'
-  Plug 'w0rp/ale'
-  Plug 'jiangmiao/auto-pairs'
-  Plug 'majutsushi/tagbar'
+  call dein#add('/home/k/.cache/dein/repos/github.com/Shougo/dein.vim')
+
+
+  " Add or remove your plugins here:
+  call dein#add('Shougo/neosnippet.vim')
+  call dein#add('Shougo/neosnippet-snippets')
+  call dein#add('Shougo/deoplete.nvim')
+  call dein#add('zchee/deoplete-go', { 'build': 'make' })
+
+  call dein#add('fatih/vim-go')
+  call dein#add('junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' })
+  call dein#add('junegunn/fzf.vim')
+  call dein#add('junegunn/vim-easy-align')
+  call dein#add('scrooloose/nerdtree', { 'on_cmd': 'NERDTreeToggle' })
+  call dein#add('sheerun/vim-polyglot')
+  call dein#add('tomasr/molokai')
+  call dein#add('tpope/vim-repeat')
+  call dein#add('tpope/vim-surround')
+  call dein#add('w0rp/ale')
+  call dein#add('jiangmiao/auto-pairs')
+  call dein#add('majutsushi/tagbar')
   " You can specify revision/branch/tag.
+  call dein#add('Shougo/deol.nvim', { 'rev': 'a1b5108fd' })
+  call dein#add('Valloric/YouCompleteMe')
 
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
-  Plug 'rust-lang/rust.vim', { 'for': 'rust' }
-  Plug 'ervandew/supertab'
-call plug#end()
+  " Required:
+  call dein#end()
+  call dein#save_state()
+endif
 
+" Required:
+filetype plugin indent on
+syntax enable
+
+" If you want to install not installed plugins on startup.
+if dein#check_install()
+  call dein#install()
+endif
 
 let g:deoplete#enable_at_startup = 1
 
@@ -56,8 +76,7 @@ let g:python3_host_prog  = '/usr/bin/python'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
 
-let g:go_fmt_command = "gofmt"
-let g:go_fmt_auto_save = 1
+let g:go_fmt_command = "goimports"
 
 " turn highlighting on
 let g:go_highlight_functions = 1
@@ -164,7 +183,7 @@ tnoremap <A-l> <C-\><C-n><C-w>l
 " Fugitive
 nnoremap ]] ]c
 nnoremap [[ [c
-nnoremap <Leader>di :Gdiff<cr>
+nnoremap <Leader>gdi :Gdiff<cr>
 nnoremap <Leader>gst :Gstatus<cr>
 nnoremap <Leader>dup :diffupdate<cr>
 
@@ -181,8 +200,6 @@ set background=dark
 colorscheme molokai
 set cursorline
 set showmatch
-set wildmode=longest,list,full
-set wildmenu
 
 
 au BufRead,BufNewFile *.dylan setf dylan
