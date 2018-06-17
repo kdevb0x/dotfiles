@@ -6,7 +6,14 @@ let g:mapleader = ','
 
 
 " Required:
-let g:_plugin_dir = expand('/home/k/.local/share/nvim/plugged')
+let g:_vimplug_path = expand('~/local/share/nvim/site/autoload/plug.vim')
+let g:_plugin_dir = expand('~/.local/share/nvim/plugged')
+if empty(glob(_plugin_dir))
+	exec silent !mkdir -p ._plugin_dir
+	exec silent !curl -fLo ._vimplug_path --create-dirs \
+https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+autocmd VimEnter * PlugInstall --sync | source ~/.config/nvim/init.vim
+endif
 
 call plug#begin(_plugin_dir)
 
