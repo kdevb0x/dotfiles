@@ -7,8 +7,8 @@ let g:mapleader = ','
 let g:_vimplug_path = expand('~/.local/share/nvim/site/autoload/plug.vim')
 
 if empty(glob(_vimplug_path))
-	exec '!curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+	exec "!curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs\
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 endif
 
 " Required:
@@ -17,11 +17,11 @@ let g:_plugin_dir = expand('~/.local/share/nvim/plugged')
 call plug#begin(_plugin_dir)
 
 " Add or remove your plugins here:
-  Plug 'Shougo/neosnippet.vim'
-  Plug 'Shougo/neosnippet-snippets'
+"  Plug 'Shougo/neosnippet.vim'
+"  Plug 'Shougo/neosnippet-snippets'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'zchee/deoplete-go', { 'do': 'make' }
-
+  Plug 'mdempsky/gocode', { 'rtp': 'nvim', 'do': '~/.config/nvim/plugged/gocode/nvim/symlink.sh' }
   Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-update-rc --no-key-bindings --no-completion', 'merged': 0 }
   Plug 'junegunn/fzf.vim'
@@ -35,6 +35,10 @@ call plug#begin(_plugin_dir)
   Plug 'w0rp/ale'
   Plug 'jiangmiao/auto-pairs'
   Plug 'majutsushi/tagbar'
+  Plug 'SirVer/ultisnips'
+  Plug 'honza/vim-snippets'
+  Plug 'vim-airline/vim-airline'
+  Plug 'vim-airline/vim-airline-themes'
   " You can specify revision/branch/tag.
 
   " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
@@ -75,6 +79,7 @@ let g:go_auto_type_info = 1
 let g:go_auto_sameids = 1
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_fail_silently = 1
+let g:go_term_enabled = 1
 
 " General properties
 let NERDTreeDirArrows=1
@@ -83,17 +88,24 @@ let NERDTreeIgnore=['\.o$', '\.pyc$']
 " let NERDTreeWinSize = 35
 let NERDTreeAutoCenter = 1
 let NERDTreeChDirMode = 2
-let NERDTreeAutoDeleteBuffer = 1
+let NERDTreeAutoDeleteBuffer=1
+let NERDTreeQuitOnOpen=1
+let NERDTreeCascadeSingleChildDir=0
 
-
-au FileType go nmap <Leader>gd <Plug>(go-def-split)
+au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
+au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef" <CR>
+au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
+au Filetype go nmap <Leader>ff <Plug>(go-def)
+au Filetype go nmap <Leader>fi <Plug>(go-def-split)
+au Filetype go nmap <Leader>fs <Plug>(go-def-vertical)
+au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <Leader>i <Plug>(go-describe)
 au FileType go nmap <Leader>I <Plug>(go-info)
 nnoremap <Leader>e :NERDTreeToggle<cr>
-nnoremap <Leader>g :grep<space>
+nnoremap <Leader>gr :grep<space>
 nnoremap <Leader>b :Buffers<cr>
 au FileType go nmap <leader>ga <Plug>(go-alternate-edit)
-au FileType go nmap <F5> <Plug>(go-run-split)
+au FileType go nmap <F5> <Plug>(go-run)
 au FileType go nmap <F10> :GoTest -short<cr>
 au FileType go nmap <F9> :GoCoverageToggle -short<cr>
 au FileType go nmap <F12> <Plug>(go-doc-split)
@@ -156,13 +168,18 @@ nnoremap <Down> :resize -2<CR>
 nnoremap <BS> <C-^>
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
-xmap ga <Plug>(EasyAlign)
+vmap <Enter> <Plug>(EasyAlign)
 
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
+" Start live interactive EasyAlign
+nnoremap <Leader>ea <Plug>(LiveEasyAlign)
+
 " Mappings related to terminal buffers
-tnoremap <Leader><Leader> <C-\><C-n>
+inoremap <M-T> :vsp <CR> :terminal<CR>a
+nnoremap <M-T> :vsp <CR> :terminal<CR>a
+tnoremap <Esc> <C-\><C-n>
 tnoremap <A-h> <C-\><C-n><C-w>h
 tnoremap <A-j> <C-\><C-n><C-w>j
 tnoremap <A-k> <C-\><C-n><C-w>k
@@ -171,9 +188,9 @@ tnoremap <A-l> <C-\><C-n><C-w>l
 " Fugitive
 nnoremap ]] ]c
 nnoremap [[ [c
-nnoremap <Leader>di :Gdiff<cr>
+" nnoremap <Leader>di :Gdiff<cr>
 nnoremap <Leader>gst :Gstatus<cr>
-nnoremap <Leader>dup :diffupdate<cr>
+" nnoremap <Leader>dup :diffupdate<cr>
 
 
 autocmd BufWritePre * :%s/\s\+$//e
@@ -190,12 +207,45 @@ set cursorline
 set showmatch
 set wildmode=longest,list,full
 set wildmenu
+set inccommand=split
 
 
 au BufRead,BufNewFile *.dylan setf dylan
 au BufRead,BufNewFile *.lid   setf dylanlid
 au BufRead,BufNewFile *.intr  setf dylanintr
 au FileType dylan set tabstop=2
-inoremap <C-Z> <C-x><C-o>
+inoremap <C-Space> <C-x><C-o>
 autocmd CursorMovedI * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
+
+"Mappings from stackexchange re: deoplete w/ tabs.
+" delete or comment out section as desired
+" ++++++++++++++++BEGIN+++++++++++++++++++++++
+
+"use <tab> for completion
+"function! TabWrap()
+"    if pumvisible()
+"        return "\<C-N>"
+"    elseif strpart( getline('.'), 0, col('.') - 1 ) =~ '^\s*$'
+"        return "\<tab>"
+"    elseif &omnifunc !~ ''
+"        return "\<C-X>\<C-O>"
+"    else
+"        return "\<C-N>"
+"    endif
+"endfunction
+"
+"" power tab
+"imap <silent><expr><tab> TabWrap()
+"
+"" Enter: complete&close popup if visible (so next Enter works); else: break undo
+"inoremap <silent><expr> <Cr> pumvisible() ?
+"            \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
+"
+"" Ctrl-Space: summon FULL (synced) autocompletion
+"inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
+"
+"" Escape: exit autocompletion, go to Normal mode
+"inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
+"
+" =================END============
