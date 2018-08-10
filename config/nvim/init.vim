@@ -7,7 +7,7 @@ let g:mapleader = ','
 let g:_vimplug_path = expand('~/.local/share/nvim/site/autoload/plug.vim')
 
 if empty(glob(_vimplug_path))
-	exec "!curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs\
+  exec "!curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs\
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 endif
 
@@ -80,6 +80,7 @@ let g:go_auto_sameids = 1
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_fail_silently = 1
 let g:go_term_enabled = 1
+let g:go_doc_keywordprg_enabled = 1
 
 " General properties
 let NERDTreeDirArrows=1
@@ -95,19 +96,27 @@ let NERDTreeCascadeSingleChildDir=0
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
 au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef" <CR>
 au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
-au Filetype go nmap <Leader>ff <Plug>(go-def)
-au Filetype go nmap <Leader>fi <Plug>(go-def-split)
-au Filetype go nmap <Leader>fs <Plug>(go-def-vertical)
+au FileType go nmap <leader>rt <Plug>(go-run-tab)
+au FileType go nmap <leader>rs <Plug>(go-run-split)
+au FileType go nmap <leader>rv <Plug>(go-run-vertical)
+" au Filetype go nmap <Leader>ff <Plug>(go-def)
+" au Filetype go nmap <Leader>fs <Plug>(go-def-split)
+" au Filetype go nmap <Leader>fv <Plug>(go-def-vertical)
 au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <Leader>i <Plug>(go-describe)
-au FileType go nmap <Leader>I <Plug>(go-info)
+au FileType go nmap <Leader>I <Plug>(go-imports)
 nnoremap <Leader>e :NERDTreeToggle<cr>
 nnoremap <Leader>gr :grep<space>
 nnoremap <Leader>b :Buffers<cr>
-au FileType go nmap <leader>ga <Plug>(go-alternate-edit)
-au FileType go nmap <F5> <Plug>(go-run)
-au FileType go nmap <F10> :GoTest -short<cr>
-au FileType go nmap <F9> :GoCoverageToggle -short<cr>
+au FileType go nmap <leader>ga<Space> <Plug>(go-alternate-edit)
+au FileType go nmap <leader>gav <Plug>(go-alternate-vertical)
+au FileType go nmap <F3> <Plug>(go-vet)
+au FileType go nmap <F4> <Plug>(go-implements)
+au FileType go nmap <F5> <Plug>(go-run-split)
+au FileType go nmap <F6> <Plug>(go-build)
+au FileType go nmap <F7> <Plug>(go-install)
+au FileType go nmap <F9> :GoTest -short<cr>
+au FileType go nmap <F10> :GoCoverageToggle -short<cr>
 au FileType go nmap <F12> <Plug>(go-doc-split)
 
 nmap <F8> :TagbarToggle<CR>
@@ -177,8 +186,8 @@ nmap ga <Plug>(EasyAlign)
 nnoremap <Leader>ea <Plug>(LiveEasyAlign)
 
 " Mappings related to terminal buffers
-inoremap <M-T> :vsp <CR> :terminal<CR>a
-nnoremap <M-T> :vsp <CR> :terminal<CR>a
+inoremap <M-T> :vsp <CR>:terminal<CR>a
+nnoremap <M-T> :vsp <CR>:terminal<CR>a
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-h> <C-\><C-n><C-w>h
 tnoremap <A-j> <C-\><C-n><C-w>j
