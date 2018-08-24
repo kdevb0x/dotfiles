@@ -52,11 +52,11 @@ let g:deoplete#enable_at_startup = 1
 let g:deoplete#sources#go#gocode_binary = '/home/k/go/bin/gocode'
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 let g:deoplete#sources#go#pointer = 1
-" let g:deoplete#sources#go#cgo = 1
+" let g:deoplete#sources#go#cgo = 1 /* Error deoplete_go: 'Source' object has no attribute 'cgo_complete_pattern' */
 let g:deoplete#sources#go#use_cache = 1
 
 let g:deoplete#sources = {}
-let g:deoplete#sources.go = ['buffer', 'go']
+let g:deoplete#sources#go = ['buffer', 'go']
 
 set completeopt+=noinsert
 set completeopt+=noselect
@@ -248,8 +248,8 @@ autocmd InsertLeave * if pumvisible() == 0 && bufname("%") != "[Command Line]"|p
 "imap <silent><expr><tab> TabWrap()
 "
 "" Enter: complete&close popup if visible (so next Enter works); else: break undo
-"inoremap <silent><expr> <Cr> pumvisible() ?
-"            \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
+inoremap <silent><expr> <Cr> pumvisible() ?
+            \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
 "
 "" Ctrl-Space: summon FULL (synced) autocompletion
 "inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
