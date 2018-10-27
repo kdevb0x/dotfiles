@@ -3,12 +3,12 @@ scriptencoding utf-8
 let mapleader = ','
 let g:mapleader = ','
 
-
 let g:_vimplug_path = expand('~/.local/share/nvim/site/autoload/plug.vim')
 
 if empty(glob(_vimplug_path))
-  exec "!curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs\
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+    silent !curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs
+                \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall
 endif
 
 " Required:
@@ -17,12 +17,15 @@ let g:_plugin_dir = expand('~/.local/share/nvim/plugged')
 call plug#begin(_plugin_dir)
 
 " Add or remove your plugins here:
-"  Plug 'Shougo/neosnippet.vim'
-"  Plug 'Shougo/neosnippet-snippets'
+  Plug 'Shougo/neosnippet.vim'
+  Plug 'Shougo/neosnippet-snippets'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-  Plug 'zchee/deoplete-go', { 'do': 'make' }
-  Plug 'mdempsky/gocode', { 'rtp': 'nvim', 'do': '~/.config/nvim/plugged/gocode/nvim/symlink.sh' }
+  Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make' }
+  " Plug 'mdempsky/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
+  Plug 'nsf/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
+  " Plug 'stamblerre/gocode'
   Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+  Plug 'zchee/deoplete-jedi', { 'for': 'python' }
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-update-rc --no-key-bindings --no-completion', 'merged': 0 }
   Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-easy-align'
@@ -41,25 +44,38 @@ call plug#begin(_plugin_dir)
   Plug 'vim-airline/vim-airline-themes'
   " You can specify revision/branch/tag.
 
-  " Plug 'Valloric/YouCompleteMe', { 'do': './install.py' }
+  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
+  Plug 'landaire/deoplete-d', { 'for': 'd' }
   Plug 'ervandew/supertab'
+  Plug 'easymotion/vim-easymotion'
 call plug#end()
 
 
 let g:deoplete#enable_at_startup = 1
 
-let g:deoplete#sources#go#gocode_binary = '/home/k/go/bin/gocode'
+" let g:deoplete#sources#d#dcd_server_autostart = 1
+" let g:deoplete#sources#go#gocode_binary = '/home/k/.local/share/nvim/plugged/gocode/gocode'
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 let g:deoplete#sources#go#pointer = 1
-" let g:deoplete#sources#go#cgo = 1 /* Error deoplete_go: 'Source' object has no attribute 'cgo_complete_pattern' */
+" let g:deoplete#sources#go#cgo = 1 " /* Error deoplete_go: 'Source' object has no attribute 'cgo_complete_pattern' */
 let g:deoplete#sources#go#use_cache = 1
 
 let g:deoplete#sources = {}
-let g:deoplete#sources#go = ['buffer', 'go']
+let g:deoplete#sources#go = ['context', 'buffer']
+
+" let g:go_def_mode = 'guru'
+let g:go_autodetect_gopath = 1
+" let g:go_info_mode = 'gocode'
+" let g:go_list_type = 'quickfix'
+let g:go_gocode_propose_source = 1
+" let g:go_echo_command_info = 1
+
+filetype plugin on
 
 set completeopt+=noinsert
 set completeopt+=noselect
+set completeopt+=preview
 
 " Path to python interpreter for neovim
 let g:python3_host_prog  = '/usr/bin/python'
@@ -87,18 +103,23 @@ let NERDTreeDirArrows=1
 " let NERDTreeMinimalUI=1
 let NERDTreeIgnore=['\.o$', '\.pyc$']
 " let NERDTreeWinSize = 35
-let NERDTreeAutoCenter = 1
-let NERDTreeChDirMode = 2
+let NERDTreeAutoCenter=1
+let NERDTreeChDirMode=2
 let NERDTreeAutoDeleteBuffer=1
 let NERDTreeQuitOnOpen=1
 let NERDTreeCascadeSingleChildDir=0
 
+let g:AutoPairsFlyMode = 0
+let g:AutoPairsBackInsert = 0
+let g:AutoPairsShortcutBackInsert = '<C-BS>'
+let g:AutoPairsMultilineClose = 0
+
 au Filetype go nnoremap <leader>v :vsp <CR>:exe "GoDef" <CR>
 au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef" <CR>
 au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
-au FileType go nmap <leader>rt <Plug>(go-run-tab)
-au FileType go nmap <leader>rs <Plug>(go-run-split)
-au FileType go nmap <leader>rv <Plug>(go-run-vertical)
+au FileType go nmap <leader>grt <Plug>(go-run-tab)
+au FileType go nmap <leader>grs <Plug>(go-run-split)
+au FileType go nmap <leader>grv <Plug>(go-run-vertical)
 " au Filetype go nmap <Leader>ff <Plug>(go-def)
 " au Filetype go nmap <Leader>fs <Plug>(go-def-split)
 " au Filetype go nmap <Leader>fv <Plug>(go-def-vertical)
@@ -106,7 +127,7 @@ au FileType go nmap <Leader>gd <Plug>(go-doc)
 au FileType go nmap <Leader>i <Plug>(go-describe)
 au FileType go nmap <Leader>I <Plug>(go-imports)
 nnoremap <Leader>e :NERDTreeToggle<cr>
-nnoremap <Leader>gr :grep<space>
+" nnoremap <Leader>gr :grep<space>
 nnoremap <Leader>b :Buffers<cr>
 au FileType go nmap <leader>ga<Space> <Plug>(go-alternate-edit)
 au FileType go nmap <leader>gav <Plug>(go-alternate-vertical)
@@ -114,9 +135,10 @@ au FileType go nmap <F3> <Plug>(go-vet)
 au FileType go nmap <F4> <Plug>(go-implements)
 au FileType go nmap <F5> <Plug>(go-run-split)
 au FileType go nmap <F6> <Plug>(go-build)
-au FileType go nmap <F7> <Plug>(go-install)
+" au FileType go nnoremap <F7> <leader>s :sp <CR>:exe "GoDef" <CR>
+au FileType go nmap <F10> :sp <CR>:exe "GoDef" <CR>
 au FileType go nmap <F9> :GoTest -short<cr>
-au FileType go nmap <F10> :GoCoverageToggle -short<cr>
+" au FileType go nmap <F10> :GoCoverageToggle -short<cr>
 au FileType go nmap <F12> <Plug>(go-doc-split)
 
 nmap <F8> :TagbarToggle<CR>
@@ -150,6 +172,9 @@ let g:tagbar_type_go = {
 
 
 nnoremap ; :
+" nnoremap <leader>, <ESC>
+vnoremap <leader>, <ESC>
+inoremap <leader>, <ESC>
 
 " Keep cursor in centre of screen after motions
 nnoremap n nzz
@@ -159,9 +184,7 @@ nnoremap { {zz
 nnoremap } }zz
 nnoremap gd gdzz
 
-" Closing buffers/windows more conveniently
-nnoremap <silent> <C-x> :bd<cr>
-nnoremap <silent> <C-q> :q<cr>
+
 
 " Reselect visual block after indent/outdent
 vnoremap < <gv
@@ -170,15 +193,14 @@ vnoremap > >gv
 " Arrow keys to resize vim splits
 nnoremap <Left> :vertical resize -2<CR>
 nnoremap <Right> :vertical resize +2<CR>
-nnoremap <Up> :resize +2<CR>
-nnoremap <Down> :resize -2<CR>
+nnoremap <Down> :resize +2<CR>
+nnoremap <Up> :resize -2<CR>
 
 " Return to previous edit point
 nnoremap <BS> <C-^>
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 vmap <Enter> <Plug>(EasyAlign)
-
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
 
@@ -198,7 +220,7 @@ tnoremap <A-l> <C-\><C-n><C-w>l
 nnoremap ]] ]c
 nnoremap [[ [c
 " nnoremap <Leader>di :Gdiff<cr>
-nnoremap <Leader>gst :Gstatus<cr>
+" nnoremap <Leader>gst :Gstatus<cr>
 " nnoremap <Leader>dup :diffupdate<cr>
 
 
@@ -206,6 +228,7 @@ autocmd BufWritePre * :%s/\s\+$//e
 set viminfo='100,\"2500,:200,%,n~/.nviminfo
 
 set nu
+set updatetime=100
 set relativenumber
 set shiftwidth=8
 set noswapfile
@@ -219,13 +242,19 @@ set wildmenu
 set inccommand=split
 
 
-au BufRead,BufNewFile *.dylan setf dylan
-au BufRead,BufNewFile *.lid   setf dylanlid
-au BufRead,BufNewFile *.intr  setf dylanintr
+au BufRead,BufNewFile *.dylan set filetype=dylan
+au BufRead,BufNewFile *.lid   set filetype=dylanlid
+au BufRead,BufNewFile *.intr  set filetype=dylanintr
 au FileType dylan set tabstop=2
+au FileType dylan set shiftwidth=2
+
+au FileType python set tabstop=4
+au FileType python set shiftwidth=4
+
 inoremap <C-Space> <C-x><C-o>
 autocmd CursorMovedI * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
 autocmd InsertLeave * if pumvisible() == 0 && bufname("%") != "[Command Line]"|pclose|endif
+
 
 "Mappings from stackexchange re: deoplete w/ tabs.
 " delete or comment out section as desired
@@ -252,7 +281,7 @@ inoremap <silent><expr> <Cr> pumvisible() ?
             \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
 "
 "" Ctrl-Space: summon FULL (synced) autocompletion
-"inoremap <silent><expr> <C-Space> deoplete#mappings#manual_complete()
+inoremap <silent><expr> <M-Space> deoplete#mappings#manual_complete()
 "
 "" Escape: exit autocompletion, go to Normal mode
 "inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
