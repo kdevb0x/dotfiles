@@ -17,14 +17,18 @@ let g:_plugin_dir = expand('~/.local/share/nvim/plugged')
 call plug#begin(_plugin_dir)
 
 " Add or remove your plugins here:
+  Plug 'baabelfish/nvim-nim'
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
+  Plug 'Shougo/echodoc.vim'
   Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
   Plug 'zchee/deoplete-go', { 'for': 'go', 'do': 'make' }
+  Plug 'sebastianmarkow/deoplete-rust'
   " Plug 'mdempsky/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
-  Plug 'nsf/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
-  " Plug 'stamblerre/gocode'
-  Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+  " Plug 'nsf/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
+  " Plug 'stamblerre/gocode', { 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
+  Plug 'https://github.com/visualfc/gocode.git', { 'commit': 'dfb212f', 'rtp': 'nvim', 'do': '~/.local/share/nvim/plugged/gocode/nvim/symlink.sh' }
+  Plug 'fatih/vim-go', { 'lazy': 1 } "{ 'do': ':GoInstallBinaries' }
   Plug 'zchee/deoplete-jedi', { 'for': 'python' }
   Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --no-update-rc --no-key-bindings --no-completion', 'merged': 0 }
   Plug 'junegunn/fzf.vim'
@@ -44,35 +48,55 @@ call plug#begin(_plugin_dir)
   Plug 'vim-airline/vim-airline-themes'
   " You can specify revision/branch/tag.
 
-  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
+ "  Plug 'Valloric/YouCompleteMe', { 'do': './install.py --all' }
   Plug 'rust-lang/rust.vim', { 'for': 'rust' }
   Plug 'landaire/deoplete-d', { 'for': 'd' }
   Plug 'ervandew/supertab'
   Plug 'easymotion/vim-easymotion'
+
 call plug#end()
 
 
+let g:nvim_nim_enable_async = 0
 let g:deoplete#enable_at_startup = 1
-
+let g:deoplete#ignore_sources = {}
 " let g:deoplete#sources#d#dcd_server_autostart = 1
-" let g:deoplete#sources#go#gocode_binary = '/home/k/.local/share/nvim/plugged/gocode/gocode'
+" let g:deoplete#sources#go#gocode_binary = '/home/k/go/bin/gocode-gomod'
+let g:deoplete#sources#go#gocode_binary = '/home/k/.local/share/nvim/plugged/gocode/gocode'
 let g:deoplete#sources#go#sort_class = ['package', 'func', 'type', 'var', 'const']
 let g:deoplete#sources#go#pointer = 1
 " let g:deoplete#sources#go#cgo = 1 " /* Error deoplete_go: 'Source' object has no attribute 'cgo_complete_pattern' */
 let g:deoplete#sources#go#use_cache = 1
 
-let g:deoplete#sources = {}
 let g:deoplete#sources#go = ['context', 'buffer']
+let g:deoplete#sources#go#cgo = 1
+let g:deoplete#sources#go#cgo#libclang_path = '/usr/lib/libclang.so'
+let g:deoplete#sources#go#on_event = 1
+let g:deoplete#sources#go#package_dot = 1
 
-" let g:go_def_mode = 'guru'
+let g:go_def_mode = 'guru'
 let g:go_autodetect_gopath = 1
 " let g:go_info_mode = 'gocode'
 " let g:go_list_type = 'quickfix'
 let g:go_gocode_propose_source = 1
-" let g:go_echo_command_info = 1
+let g:go_echo_command_info = 1
+
+" let g:ale_go_langserver_executable = '/home/k/go/bin/go-langserver'
+let g:ale_linters = {'go': ['gometalinter', 'gofmt']}
+" let g:ale_go_gometalinter_options = '--fast'
+" let g:ale_completion_enabled = 1
+let g:ale_completion_delay = 300
+let g:ale_close_preview_on_insert = 1
+let g:ale_list_vertical = 1
+au FileType go nmap <Leader>de <Plug>(ale_go_to_definition_in_tab)
+au FileType go nmap <Leader>re <Plug>(ale_find_references)
+au FileType go nmap <Leader>i <Plug>(go-implements)
+
 
 filetype plugin on
 
+set cmdheight=2
+set noshowmode
 set completeopt+=noinsert
 set completeopt+=noselect
 set completeopt+=preview
@@ -82,7 +106,10 @@ let g:python3_host_prog  = '/usr/bin/python'
 " Skip the check of neovim module
 let g:python3_host_skip_check = 1
 
-let g:go_fmt_command = "gofmt"
+let g:python2_host_prog = '/usr/bin/python2'
+let g:python2_host_skip_check = 1
+
+let g:go_fmt_command = "goimports"
 let g:go_fmt_auto_save = 1
 
 " turn highlighting on
@@ -96,7 +123,7 @@ let g:go_auto_sameids = 1
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_fail_silently = 1
 let g:go_term_enabled = 1
-let g:go_doc_keywordprg_enabled = 1
+" let g:go_doc_keywordprg_enabled = 1
 
 " General properties
 let NERDTreeDirArrows=1
@@ -120,25 +147,29 @@ au Filetype go nnoremap <leader>t :tab split <CR>:exe "GoDef"<CR>
 au FileType go nmap <leader>grt <Plug>(go-run-tab)
 au FileType go nmap <leader>grs <Plug>(go-run-split)
 au FileType go nmap <leader>grv <Plug>(go-run-vertical)
+au FileType go nmap <leader>gts <Plug>(go-test-split)
+au FileType go nmap <leader>gtv <Plug>(go-test-vertical)
+au FileType go nmap <leader>gtt <Plug>(go-test-tab)
+
+
 " au Filetype go nmap <Leader>ff <Plug>(go-def)
 " au Filetype go nmap <Leader>fs <Plug>(go-def-split)
 " au Filetype go nmap <Leader>fv <Plug>(go-def-vertical)
 au FileType go nmap <Leader>gd <Plug>(go-doc)
-au FileType go nmap <Leader>i <Plug>(go-describe)
-au FileType go nmap <Leader>I <Plug>(go-imports)
+au FileType go nmap <Leader>a <Plug>(go-describe)
+" au FileType go nmap <Leader>I <Plug>(go-imports)
 nnoremap <Leader>e :NERDTreeToggle<cr>
 " nnoremap <Leader>gr :grep<space>
 nnoremap <Leader>b :Buffers<cr>
 au FileType go nmap <leader>ga<Space> <Plug>(go-alternate-edit)
 au FileType go nmap <leader>gav <Plug>(go-alternate-vertical)
-au FileType go nmap <F3> <Plug>(go-vet)
 au FileType go nmap <F4> <Plug>(go-implements)
 au FileType go nmap <F5> <Plug>(go-run-split)
 au FileType go nmap <F6> <Plug>(go-build)
 " au FileType go nnoremap <F7> <leader>s :sp <CR>:exe "GoDef" <CR>
-au FileType go nmap <F10> :sp <CR>:exe "GoDef" <CR>
+" au FileType go nmap <F10> :sp <CR>:exe "GoDef" <CR>
 au FileType go nmap <F9> :GoTest -short<cr>
-" au FileType go nmap <F10> :GoCoverageToggle -short<cr>
+au FileType go nmap <F10> :GoCoverageToggle -short<cr>
 au FileType go nmap <F12> <Plug>(go-doc-split)
 
 nmap <F8> :TagbarToggle<CR>
@@ -173,13 +204,18 @@ let g:tagbar_type_go = {
 
 nnoremap ; :
 " nnoremap <leader>, <ESC>
-vnoremap <leader>, <ESC>
-inoremap <leader>, <ESC>
+" vnoremap <leader>, <ESC>
+" inoremap <leader>, <ESC>
+
+" map <S-Space> <ESC>
+" vnoremap <S-Space> <ESC>
+" inoremap <S-Space> <ESC>
+
 
 " Keep cursor in centre of screen after motions
 nnoremap n nzz
-nnoremap <C-d> <C-d>zz
-nnoremap <C-u> <C-u>zz
+" nnoremap <C-d> <C-d>zz
+" nnoremap <C-u> <C-u>zz
 nnoremap { {zz
 nnoremap } }zz
 nnoremap gd gdzz
@@ -210,6 +246,7 @@ nnoremap <Leader>ea <Plug>(LiveEasyAlign)
 " Mappings related to terminal buffers
 inoremap <M-T> :vsp <CR>:terminal<CR>a
 nnoremap <M-T> :vsp <CR>:terminal<CR>a
+nnoremap <M-t> :below sp <CR>:terminal<CR>a
 tnoremap <Esc> <C-\><C-n>
 tnoremap <A-h> <C-\><C-n><C-w>h
 tnoremap <A-j> <C-\><C-n><C-w>j
@@ -240,9 +277,10 @@ set showmatch
 set wildmode=longest,list,full
 set wildmenu
 set inccommand=split
+set autowrite
 
 
-au BufRead,BufNewFile *.dylan set filetype=dylan
+au BufRead,BufNewFile *.dylan set filetype=dylan tabstop=2 shiftwidth=2
 au BufRead,BufNewFile *.lid   set filetype=dylanlid
 au BufRead,BufNewFile *.intr  set filetype=dylanintr
 au FileType dylan set tabstop=2
@@ -287,3 +325,46 @@ inoremap <silent><expr> <M-Space> deoplete#mappings#manual_complete()
 "inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
 "
 " =================END============
+function! BsdHeader()
+	call append(0, "/* BSD 3-Clause License")
+	call append(1, "*")
+	call append(2, "*  Copyright (c) 2018, kdevb0x Ltd.")
+	call append(3, "*  All rights reserved.")
+	call append(4, "*")
+	call append(5, "*  Redistribution and use in source and binary forms, with or without")
+	call append(6, "*  modification, are permitted provided that the following conditions are met:")
+	call append(7, "*")
+	call append(8, "*  Redistributions of source code must retain the above copyright notice, this")
+	call append(9, "*  list of conditions and the following disclaimer.")
+	call append(10, "*")
+	call append(11, "*  Redistributions in binary form must reproduce the above copyright notice,")
+	call append(12, "*  this list of conditions and the following disclaimer in the documentation")
+	call append(13, "*  and/or other materials provided with the distribution.")
+	call append(14, "*")
+	call append(15, "*  Neither the name of the copyright holder nor the names of its")
+	call append(16, "*  contributors may be used to endorse or promote products derived from")
+	call append(17, "*  this software without specific prior written permission.")
+	call append(18, "*")
+	call append(19, "*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS'")
+	call append(20, "*  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE")
+	call append(21, "*  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE")
+	call append(22, "*  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE")
+	call append(23, "*  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL")
+	call append(24, "*  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR")
+	call append(25, "*  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER")
+	call append(26, "*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,")
+	call append(27, "*  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE")
+	call append(28, "*  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.")
+	call append(29, " */")
+endfunction
+
+function! BsdPreamble()
+	call append(0, "// Copyright 2018 kdevb0x Ltd. All rights reserved.")
+	call append(1, "// Use of this source code is governed by the BSD 3-Clause license")
+	call append(2, "// The full license text can be found in the LICENSE file.")
+endfunction
+
+nmap <F27> :call BsdHeader()<CR>
+nmap <F3> :call BsdPreamble()<CR>
+
+
