@@ -17,6 +17,7 @@ let g:_plugin_dir = expand('~/.local/share/nvim/plugged')
 call plug#begin(_plugin_dir)
 
 " Add or remove your plugins here:
+  Plug 'https://github.com/saibing/bingo.git', { 'do': 'cd ~/.local/share/nvim/plugged/bingo && GO111MODULE=on go1.12beta2 install' }
   Plug 'baabelfish/nvim-nim'
   Plug 'Shougo/neosnippet.vim'
   Plug 'Shougo/neosnippet-snippets'
@@ -71,12 +72,12 @@ let g:deoplete#sources#go#use_cache = 1
 let g:deoplete#sources#go = ['context', 'buffer']
 let g:deoplete#sources#go#cgo = 1
 let g:deoplete#sources#go#cgo#libclang_path = '/usr/lib/libclang.so'
-let g:deoplete#sources#go#on_event = 1
+let g:deoplete#sources#go#on_event = 0
 let g:deoplete#sources#go#package_dot = 1
 
 let g:go_def_mode = 'guru'
 let g:go_autodetect_gopath = 1
-" let g:go_info_mode = 'gocode'
+let g:go_info_mode = 'guru'
 " let g:go_list_type = 'quickfix'
 let g:go_gocode_propose_source = 1
 let g:go_echo_command_info = 1
@@ -90,7 +91,7 @@ let g:ale_close_preview_on_insert = 1
 let g:ale_list_vertical = 1
 au FileType go nmap <Leader>de <Plug>(ale_go_to_definition_in_tab)
 au FileType go nmap <Leader>re <Plug>(ale_find_references)
-au FileType go nmap <Leader>i <Plug>(go-implements)
+au FileType go nmap <Leader>gv <Plug>(go-doc-vertical)
 
 
 filetype plugin on
@@ -100,6 +101,10 @@ set noshowmode
 set completeopt+=noinsert
 set completeopt+=noselect
 set completeopt+=preview
+
+if has("patch-7.4.314")
+    set shortmess+=c
+endif
 
 " Path to python interpreter for neovim
 let g:python3_host_prog  = '/usr/bin/python'
@@ -119,11 +124,11 @@ let g:go_highlight_structs = 1
 let g:go_highlight_operators = 1
 let g:go_highlight_build_constraints = 1
 let g:go_auto_type_info = 1
-let g:go_auto_sameids = 1
+let g:go_auto_sameids = 0
 let g:SuperTabDefaultCompletionType = "context"
 let g:go_fmt_fail_silently = 1
 let g:go_term_enabled = 1
-" let g:go_doc_keywordprg_enabled = 1
+let g:go_doc_keywordprg_enabled = 1
 
 " General properties
 let NERDTreeDirArrows=1
@@ -325,6 +330,42 @@ inoremap <silent><expr> <M-Space> deoplete#mappings#manual_complete()
 "inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
 "
 " =================END============
+
+" ++++++++++++ Free Software License Macros ++++++++++++
+
+function! MitHeader()
+	call append(0, "/* Copyright 2018-2019 Kdevb0x Ltd.")
+	call append(1, "*")
+	call append(2, "* Permission is hereby granted, free of charge, to any person obtaining")
+	call append(3, "* a copy of this software and associated documentation files \(the")
+	call append(4, "* \"Software\"\), to deal in the Software without restriction, including")
+	call append(5, "* without limitation the rights to use, copy, modify, merge, publish,")
+	call append(6, "* distribute, sublicense, and/or sell copies of the Software, and to")
+	call append(7, "* permit persons to whom the Software is furnished to do so, subject to")
+	call append(8, "* the following conditions:")
+	call append(9, "* ")
+	call append(10, "* The above copyright notice and this permission notice shall be")
+	call append(11, "* included in all copies or substantial portions of the Software.")
+	call append(12, "* ")
+	call append(13, "* THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND,")
+	call append(14, "* EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF")
+	call append(15, "* MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND")
+	call append(16, "* NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE")
+	call append(17, "* LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION")
+	call append(18, "* OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION")
+	call append(19, "* WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.")
+	call append(20, "*/")
+endfunction
+
+function! MitPreamble()
+ 	call append(0, "// Copyright (C) 2018-2019 Kdevb0x Ltd.")
+ 	call append(1, "// This software may be modified and distributed under the terms")
+ 	call append(2, "// of the MIT license.  See the LICENSE file for details.")
+	call append(3, "")
+ endfunction
+
+" BSD 3-Clause License
+
 function! BsdHeader()
 	call append(0, "/* BSD 3-Clause License")
 	call append(1, "*")
@@ -364,6 +405,8 @@ function! BsdPreamble()
 	call append(2, "// The full license text can be found in the LICENSE file.")
 endfunction
 
+nmap <F15> :call MitHeader()<CR>
+nmap <F28> :call MitPreamble()<CR>
 nmap <F27> :call BsdHeader()<CR>
 nmap <F3> :call BsdPreamble()<CR>
 
