@@ -1,0 +1,31 @@
+#
+# ~/.bashrc
+#
+
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+alias ls='ls --color=auto'
+PS1='[\u:\w]\$ '
+
+# Include user's private bin dir if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$HOME/bin:$PATH"
+fi
+
+export PATH
+export JAVA_HOME=/usr/lib/jvm/default
+export LC_ALL=en_US.UTF-8
+export EDITOR=/usr/bin/nvim
+export GO111MODULE=on
+export QT_WEBKIT=true
+# export CGO_CXXFLAGS_ALLOW='.*'
+# export CGO_LDFLAGS_ALLOW='.*'
+# export CGO_CFLAGS_ALLOW='.*'
+export ANDROID_HOME=/opt/android-sdk
+export GOROOT=/home/k/sdk/go1.12beta2
+export GOPATH=/home/k/go
+export GOBIN=/home/k/go/bin
+export PATH=$HOME/.local/bin:$GOBIN:$GOROOT/bin:$ANDROID_HOME/ndk-bundle:$HOME/.cargo/bin:/opt/opendylan-current/bin:$HOME/.gem/ruby/2.4.0/bin:$HOME/.fzf/bin:$PATH
+
+alias gs='git status' ga='git add' gp='git push' gc='git commit' modoff='export GO111MODULE=off' modon='export GO111MODULE=on'
