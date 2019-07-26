@@ -72,7 +72,7 @@ call plug#end()
 
 " let g:nvim_nim_enable_async = 0
 
-let g:deoplete#enable_at_startup = 1
+let g:deoplete#enable_at_startup = 0
 let g:deoplete#enable_smart_case = 2
 
  let g:deoplete#ignore_sources = {}
@@ -98,15 +98,15 @@ set hidden
 
 " nnoremap <F7> :call LanguageClient_contextMenu()<CR>
 " Run gofmt and goimports on save
-" autocmd BufWritePre *.go :call LanguageClient#textDocument_formatting_sync()
 
-let g:go_def_mode = 'godef'
+
+let g:go_def_mode = 'guru'
 let g:go_autodetect_gopath = 0
 let g:go_info_mode = 'guru'
 " or 'gopls'
 let g:go_list_type = 'quickfix'
 let g:go_list_height = 10
-let g:go_gocode_propose_source = 1
+let g:go_gocode_propose_source = 0
 let g:gocode_propose_builtins = 0
 let g:go_gocode_socket_type = 'unix'
 let g:go_echo_command_info = 1
@@ -196,13 +196,12 @@ au FileType go nmap <leader>gts <Plug>(go-test-split)
 au FileType go nmap <leader>gtv <Plug>(go-test-vertical)
 au FileType go nmap <leader>gtt <Plug>(go-test-tab)
 
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() :
-	\"\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "<C-g>u<CR><c-r>=coc#on_enter()<CR>"
 
-nmap <silent> cd <Plug>(coc-definition)
-nmap <silent> ct <Plug>(coc-type-definition)
-nmap <silent> ci <Plug>(coc-implementation)
-nmap <silent> cr <Plug>(coc-references)
+au FileType go nmap <Leader>cd <Plug>(coc-definition)
+au FileType go nmap <Leader>ct <Plug>(coc-type-definition)
+au FileType go nmap <Leader>ci <Plug>(coc-implementation)
+au FileType go nmap <Leader>cr <Plug>(coc-references)
 
 " au Filetype go nmap <Leader>ff <Plug>(go-def)
 " au Filetype go nmap <Leader>fs <Plug>(go-def-split)
@@ -218,8 +217,9 @@ au FileType go nmap <leader>gav <Plug>(go-alternate-vertical)
 au FileType go nmap <F4> <Plug>(go-implements)
 au FileType go nmap <F5> <Plug>(go-run-split)
 au FileType go nmap <F6> <Plug>(go-build)
-au FileType go nnoremap <F7> <leader>s :sp <CR>:exe "GoDef" <CR>
+au FileType go nnoremap <Leader>s :sp <CR>:exe "GoDef" <CR>
 " au FileType go nmap <F10> :sp <CR>:exe "GoDef" <CR>
+" au FileType go nmap <F7> :call coc#expandableOrJumpable() <CR>
 au FileType go nmap <F9> :GoTest -short<cr>
 au FileType go nmap <F10> :GoCoverageToggle -short<cr>
 au FileType go nmap <F12> <Plug>(go-doc-split)
@@ -313,7 +313,7 @@ autocmd BufWritePre * :%s/\s\+$//e
 set viminfo='100,\"2500,:200,%,n~/.nviminfo
 
 set nu
-set updatetime=100
+set updatetime=200
 set relativenumber
 set shiftwidth=8
 set noswapfile
@@ -345,13 +345,14 @@ if has('statusline')
   endif
   set statusline+=\ [%{&ff}/%Y]           " Filetype
   set statusline+=\ [%{getcwd()}]         " Current dir
-  set statusline+=%=%-14.(%l,%cV%)\ %p%%  " Right aligned file nav info
+  set statusline+=%=%-16.(%l,%cV%)\ %p%%  " Right aligned file nav info
 endif
 
 au BufRead,BufNewFile *.dylan set filetype=dylan tabstop=2 shiftwidth=2
 au BufRead,BufNewFile *.lid   set filetype=dylanlid
 au BufRead,BufNewFile *.intr  set filetype=dylanintr
 au FileType dylan set tabstop=2
+"
 "    else
 "        return "\<C-N>"
 "    endif
@@ -361,14 +362,23 @@ au FileType dylan set tabstop=2
 "imap <silent><expr><tab> TabWrap()
 "
 "" Enter: complete&close popup if visible (so next Enter works); else: break undo
-inoremap <silent><expr> <Cr> pumvisible() ?
-         \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
+" inoremap <silent><expr> <Cr> pumvisible() ?
+ "        \ deoplete#mappings#close_popup() : "<C-g>u<Cr>"
 
 "" Ctrl-Space: summon FULL (synced) autocompletion
 inoremap <silent><expr> <M-Space> deoplete#mappings#manual_complete()
 
 "" Escape: exit autocompletion, go to Normal mode
-inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
+" inoremap <silent><expr> <Esc> pumvisible() ? "<C-e><Esc>" : "<Esc>"
+
+" This function mimics the vscode (I think) hover action for go symbols using
+" coc.
+
+nmap <F7> :call HoverFunc()<CR>
+
+function! HoverFunc() abort
+	call CocActionAsync('doHover')
+endfunction
 
 " =================END============
 
