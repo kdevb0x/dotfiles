@@ -1,0 +1,42 @@
+{
+	"languageserver": {
+		"golang": {
+			"command": "gopls",
+      			"rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      			"filetypes": ["go"]
+    		},
+		"ccls": {
+     			"command": "ccls",
+			"filetypes": ["c", "cpp", "objc", "objcpp", "qml"],
+     			"rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/"],
+      			"initializationOptions": {
+         			"cache": {
+           				"directory": "/tmp/ccls"
+         			}
+       			}
+    		}
+  	},
+	"coc.preferences.hoverTarget": "float",
+	"suggest.enablePreview": true,
+	"suggest.floatEnable": true,
+	"suggest.keepCompleteopt": true,
+	"codeLens.enable": true,
+	"coc.preferences.previewAutoClose": true,
+	"coc.preferences.currentFunctionSymbolAutoUpdate": true,
+	"suggest.detailField": "menu",
+	"suggest.maxPreviewWidth": 35,
+	"suggest.labelMaxLength": 80,
+	"suggest.maxCompleteItemCount": 10000,
+	"suggest.echodocSupport": true,
+	"signature.maxWindowHeight": 30,
+	"suggest.detailMaxLength": 100,
+	"signature.hideOnTextChange": true,
+	"list.maxPreviewHeight": 30,
+	"diagnostic.virtualText": true,
+	"signature.target": "float",
+	"suggest.triggerAfterInsertEnter": false,
+	"suggest.enablePreselect": false,
+	"suggest.noselect": true,
+  "suggest.minTriggerInputLength": 1,
+  "coc.preferences.extensionUpdateCheck": "daily"
+}
